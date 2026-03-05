@@ -23,15 +23,15 @@ We created an SSH key pair.
 - The public key is automatically copied to `almalinux@<IP_ADDRESS>/home/almalinux/.ssh/authorized_keys` on the cloud veneto instance, while we need to copy the public and private keys onto our local `~/.ssh` repository.
 - In the local repository `~/.ssh` we write on the config file
 
-`Host sc4ps
+```Host sc4ps
 
   HostName 10.67.20.251
 
   User almalinux
 
   IdentityFile ~/.ssh/id_sc4ps
-  
-  ProxyJump cloudveneto`
+
+  ProxyJump cloudveneto```
 
 The `Host`, in my case *sc4ps* is just a name, that will be used to do the ssh connection. The `HostName` is the IP address. In my case, since I already had an exchanged ssh key with the CloudVeneto gate, I used the `ProxyJump cloudveneto` line, where *cloudveneto* is the `Host` for *gate.cloudveneto.it*. The `User` is by default *almalinux* and `IdentityFile` needs the path to the private key (of the key pair shared with the Instance).
 
