@@ -34,5 +34,9 @@ Host sc4ps
 
   ProxyJump cloudveneto
 ```
-The `Host`, in my case *sc4ps* is just a name, that will be used to do the ssh connection. The `HostName` is the IP address. In my case, since I already had an exchanged ssh key with the CloudVeneto gate, I used the `ProxyJump cloudveneto` line, where *cloudveneto* is the `Host` for *gate.cloudveneto.it*. The `User` is by default *almalinux* and `IdentityFile` needs the path to the private key (of the key pair shared with the Instance).
+- The `Host`, in my case *sc4ps* is just a name, that will be used to do the ssh connection. The `HostName` is the IP address. In my case, since I already had an exchanged ssh key with the CloudVeneto gate, I used the `ProxyJump cloudveneto` line, where *cloudveneto* is the `Host` for *gate.cloudveneto.it*. The `User` is by default *almalinux* and `IdentityFile` needs the path to the private key (of the key pair shared with the Instance).
+
+Now I can just run `ssh sc4ps` and I am on my instance.
+
+Once in, I can install developement tools using the command `sudo dnf group install "Development Tools"`.
 
