@@ -99,23 +99,28 @@ bool check_fast(int n, int A[n][n], int B[n][n], int C[n][n]) {
 
 
 int main(int argc, char** argv){
-    if (argc != 4) {
-		fprintf(stderr, "Usage: %s a x y\n",argv[0]);
+    if (argc != 5) {
+		fprintf(stderr, "Usage: %s a b N output_file\n", argv[0]);
 		return 1;
 	}
     int a_, b_;
     a_ = strtol(argv[1], NULL, 10);
 	b_ = strtol(argv[2], NULL, 10);
-    char* fileout = argv[3];
-	double tstart = getClock();
-    int rows = 1000;
-    int cols = rows;
-    int n = rows;
+	int n = strtol(argv[3], NULL, 10);
+    char* fileout = argv[4];
 
-    int (*a)[rows] = malloc(sizeof(int[rows][cols]));
-    int (*b)[rows] = malloc(sizeof(int[rows][cols]));
-    int (*c)[rows] = malloc(sizeof(int[rows][cols]));
-    int (*c_opt)[rows] = malloc(sizeof(int[rows][cols]));
+	if (n <= 0) {
+		fprintf(stderr, "Error: N must be a positive integer\n");
+		return 1;
+	}
+	double tstart = getClock();
+    int rows = n;
+    int cols = rows;
+
+    int (*a)[n] = malloc(sizeof(int[n][n]));
+    int (*b)[n] = malloc(sizeof(int[n][n]));
+    int (*c)[n] = malloc(sizeof(int[n][n]));
+    int (*c_opt)[n] = malloc(sizeof(int[n][n]));
 
     if (a == NULL || b == NULL || c == NULL || c_opt == NULL) {
         fprintf(stderr, "Error allocating matrix memory\n");
@@ -125,7 +130,7 @@ int main(int argc, char** argv){
         free(c_opt);
         return 1;
     }
-	printf("The total memory allocated is %7.3lf GB\n.", 4.0 * sizeof(double)*(rows*cols)/1024/1024/1024);
+    printf("The total memory allocated is %7.3lf GB\n.", 4.0 * sizeof(int) * (rows * cols) / 1024 / 1024 / 1024);
 	
     for (int i = 0; i < rows; i++){
         for (int j = 0; j < cols; j++){
@@ -141,18 +146,20 @@ int main(int argc, char** argv){
         return 1;
     }
 
+    fprintf(fp, "a = %d, b = %d, N = %d\n", a_, b_, n);
+
     double tend_init = getClock();
     double tinit = tend_init - tstart;
 	fprintf(fp, "Time for initialization: %f seconds\n", tinit);
     
     double tstart_mult = getClock();
-    matmul(rows, a, b, c);
+    matmul(n, a, b, c);
     double tend_mult = getClock();
     double tmult = tend_mult - tstart_mult;
     fprintf(fp, "Time for matrix multiplication: %f seconds\n", tmult);
 
     double tstart_check = getClock();
-    if (is_correct(rows, a, b, c)) {
+    if (is_correct(n, a, b, c)) {
         fprintf(fp, "The matrix multiplication is correct.\n");
     } else {
         fprintf(fp, "The matrix multiplication is NOT correct.\n");
@@ -162,13 +169,13 @@ int main(int argc, char** argv){
     fprintf(fp, "Time for correctness check: %f seconds\n", tcheck);
 
     double tstart_opt = getClock();
-    matmul_optimized(rows, a, b, c_opt);
+    matmul_optimized(n, a, b, c_opt);
     double tend_opt = getClock();
     double topt = tend_opt - tstart_opt;
     fprintf(fp, "Time for optimized matrix multiplication: %f seconds\n", topt);
 
     double tstart_check_opt = getClock();
-    if (is_correct(rows, a, b, c_opt)) {
+    if (is_correct(n, a, b, c_opt)) {
         fprintf(fp, "The matrix multiplication with the optimized method is correct.\n");
     } else {
         fprintf(fp, "The matrix multiplication with the optimized method is NOT correct.\n");
@@ -178,7 +185,7 @@ int main(int argc, char** argv){
     fprintf(fp, "Time for correctness check of optimized method: %f seconds\n", tcheck_opt);
 
     double tstart_check_fast = getClock();
-    if (check_fast(rows, a, b, c)) {
+    if (check_fast(n, a, b, c)) {
         fprintf(fp, "The matrix multiplication with the original method is correct (fast check).\n");
     } else {
         fprintf(fp, "The matrix multiplication with the original method is NOT correct (fast check).\n");
@@ -188,7 +195,7 @@ int main(int argc, char** argv){
     fprintf(fp, "Time for fast correctness check of original method: %f seconds\n", tcheck_fast);
 
     double tstart_check_fast_opt = getClock();
-    if (check_fast(rows, a, b, c_opt)) {
+    if (check_fast(n, a, b, c_opt)) {
         fprintf(fp, "The matrix multiplication with the optimized method is correct (fast check).\n");
     } else {
         fprintf(fp, "The matrix multiplication with the optimized method is NOT correct (fast check).\n");
