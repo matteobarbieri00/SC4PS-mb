@@ -1,6 +1,6 @@
 # Homework01: Guide to Setup My Linux Machine in CloudVeneto for Compiling and Running C Codes
 
-# CloudVeneto Setup
+## CloudVeneto Setup
 
 Once successfully accessed a project in [CloudVeneto](https://cloudveneto.ict.unipd.it/dashboard/home/) (in this case SC4PS-PhD), one has to select in the side-bar menu the option:
 
@@ -39,4 +39,11 @@ Host sc4ps
 Now I can just run `ssh sc4ps` and I am on my instance.
 
 Once in, I can install developement tools using the command `sudo dnf group install "Development Tools"`.
+
+Now I can setup the git repository, sharing an ssh-key with the remote repository on GitHub. After cloning the remote repository with the command `git clone` I can edit the files locally and then push them to the remote repository.
+
+## First exercise: `myscript.sh`
+
+Inside the directory linked with the remote repository, I create a directory called "HomeWork01", where I can store my solution to the assigned homework. Apart from this file, there is a scriptfile called `myscript.sh`, which I can edit using the command `vi myscript.sh`. After pressing the the keybord "i" I can edit the file and I add the command `pwd`, then pressing "ESC" I can write the command `:wq` to save the modifications and close the editor. I then run the command `chmod +x myscript.sh` and finally run it with `./myscript.sh`, which produces on the terminal the message  `/home/almalinux/SC4PS-mb/HomeWork01`, which is the path to my current location.
+
 
