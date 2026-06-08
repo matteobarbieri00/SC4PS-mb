@@ -2,6 +2,8 @@
 
 I will here answer to the questions, dividing them in parts in order to easily map answers to questions.
 
+I point out that I cloned the directory on my laptop and run the code there in order to have visual access to the plots. In order to run the code that required pyhton I created a python virtual environment.
+
 ## Part 1
 
 1. The FFT is the efficient algortithm for the DFT: while DFT requires $\mathcal{O}(N^2)$ operations, the FFT requires $\mathcal{O}(N\log_2N)$. 
