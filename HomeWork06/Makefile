@@ -1,4 +1,4 @@
-CC = gcc
+CC ?= gcc
 CFLAGS ?= -O2 -Wall -Wextra -Wpedantic -std=c11
 LDLIBS ?= -lm -lhdf5
 TARGET := sum2vec

@@ -53,23 +53,21 @@ num_chunks = 4
 In that case, the program computes the chunk size for each vector length.
 
 ## Build
+The current `Makefile` works on cloud veneto. If I wish to run the code on mac I need to replace the lines:
+- `CC ?= gcc` with  `H5CC ?= /opt/homebrew/bin/h5cc`;
+- `LDLIBS ?= -lm -lhdf5` with `LDLIBS ?= -lm`;
+- `$(CC) $(CFLAGS) $< -o $@ $(LDLIBS)` with `$(H5CC) $(CFLAGS) $< -o $@ $(LDLIBS)`
 
-With Homebrew HDF5 on macOS:
+Once edited the `Makefile` I just need torun 
 
 ```sh
 make
 ```
 
-If `h5cc` is installed elsewhere, override `H5CC`:
+and then
 
 ```sh
-make H5CC=/path/to/h5cc
-```
-
-## Run
-
-```sh
-./sum2vec config.txt
+make run
 ```
 
 The HDF5 file stores, for each configured vector size:
