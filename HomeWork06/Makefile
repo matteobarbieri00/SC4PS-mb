@@ -1,13 +1,13 @@
-H5CC ?= /opt/homebrew/bin/h5cc
+CC = gcc
 CFLAGS ?= -O2 -Wall -Wextra -Wpedantic -std=c11
-LDLIBS ?= -lm
+LDLIBS ?= -lm -lhdf5
 TARGET := sum2vec
 CONFIG := config.txt
 
 all: $(TARGET)
 
 $(TARGET): sum2vec.c
-	$(H5CC) $(CFLAGS) $< -o $@ $(LDLIBS)
+	$(CC) $(CFLAGS) $< -o $@ $(LDLIBS)
 
 run: $(TARGET)
 	./$(TARGET) $(CONFIG)
