@@ -60,21 +60,3 @@ for x in x_vals:
 
     plt.savefig(output_dir / f"spherical_harm_errors_x_{x}.png")
     plt.close()
-
-    # Diagnostic: if Y_l0 errors are driven only by P_l errors, these
-    # differences should stay near floating-point roundoff.
-    diff_f = np.abs(sph_err_f - err_f)
-    diff_b = np.abs(sph_err_b - err_b)
-
-    plt.figure()
-    plt.semilogy(l, np.maximum(diff_f, tiny), label="|rel_err_sph_forward - rel_err_forward|")
-    plt.semilogy(l, np.maximum(diff_b, tiny), label="|rel_err_sph_back - rel_err_back|")
-
-    plt.title(f"Propagation check for Y_l0 relative errors (x={x})")
-    plt.xlabel("l")
-    plt.ylabel("Absolute difference")
-    plt.legend()
-    plt.grid()
-
-    plt.savefig(output_dir / f"spherical_harm_error_match_x_{x}.png")
-    plt.close()

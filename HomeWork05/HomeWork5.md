@@ -125,14 +125,14 @@ For spherical harmonics I observe the following relative errors:
 	<figcaption>Figure 11. Relative errors for the spherical harmonics computed from the forward and backward recurrence at x = 0.9.</figcaption>
 </figure>
 
-Since
-$$Y_{\ell 0}(\theta,\phi)=\sqrt{\frac{2\ell+1}{4\pi}}\,P_\ell(\cos\theta),$$
-the normalization factor is known and does not introduce additional instability. Therefore, the relative error in $Y_{\ell0}$ should track the relative error in $P_\ell(\cos\theta)$.
-
-This is exactly what the data show: in `outputs/legendre_errors.csv`, the columns `rel_err_sph_forward` and `rel_err_forward` (and analogously `rel_err_sph_back` and `rel_err_back`) are equal up to machine-roundoff differences (maximum absolute mismatch about $2\times10^{-16}$ for forward and $9\times10^{-16}$ for backward). So the spherical-harmonic error behavior is a direct propagation of the Legendre error behavior.
 
 <figure>
 	<img src="outputs/spherical_harm_errors_x_0.99.png" alt="spherical harmonic relative errors for x=0.99">
 	<figcaption>Figure 12. Relative errors for the spherical harmonics computed from the forward and backward recurrence at x = 0.99.</figcaption>
 </figure>
 
+Since
+$$Y_{\ell 0}(\theta,\phi)=\sqrt{\frac{2\ell+1}{4\pi}}\,P_\ell(\cos\theta),$$
+the normalization factor is known and does not introduce additional instability. Therefore, the relative error in $Y_{\ell0}$ should track the relative error in $P_\ell(\cos\theta)$.
+
+This is exactly what the data show: in `outputs/legendre_errors.csv`, the columns `rel_err_sph_forward` and `rel_err_forward` (and analogously `rel_err_sph_back` and `rel_err_back`) are equal up to machine-roundoff differences (maximum absolute mismatch about $2\times10^{-16}$ for forward and $9\times10^{-16}$ for backward). So the spherical-harmonic error behavior is a direct propagation of the Legendre error behavior.
