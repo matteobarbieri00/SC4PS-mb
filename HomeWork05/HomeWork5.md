@@ -82,54 +82,29 @@ I give here the pots for the absulute and relative errors values of the foreward
 	<figcaption>Figure 8. Relative errors for the forward and backward recurrence at x = 0.99.</figcaption>
 </figure>
 
-### Comments on the plots
+From the plots above it is clear how the foreward recurrence is more numerically stabel. Indeed the absolute and relative errors with respect to the high precision reference is clearly lower for the foreward recurrence than for the backward recurrence.
 
-For $x = 0.1$, it is clear Figure 1 and 2, that the forward recurrence is accurate, given that the absolute error is in the order of $10^{-16}$ and the relative error is of order $10^{-14}$
-
-Going to Figure 2 and 4, one can see that the absolute and relative errors of the backward recurrence are relatively high, whereas for the foreward recursion the errors scale exponentially as $l$ increases. This behaviour also shows up in Figures 5 and 6, for $x = 0.9$ and in Figures 7 and 8, for $x=0.99$.
-
-Overall, backward recurrence has higher absolute and relative errors compared with the foreward recurrence.
+__NOTE:__ the high precision reference only works on cloudveneto. When trying to run the code I get numerical instability also for the foreward recursion. This is probably because the `long double` is not actually double precision on my laptop (Mac with M3 chip).
 
 ## 4: Explanation of the Numerical Behaviour
 
-### Two Independent Solutions of the Recurrence
+The recurrence
+$$P_{\ell+1}(x)=\frac{2\ell+1}{\ell+1}xP_\ell(x)-\frac{\ell}{\ell+1}P_{\ell-1}(x)$$
+is second order, so it has **two independent solutions**. The physical sequence $P_\ell(x)$ is selected only when two conditions are enforced (for example $P_0=1$ and $P_1=x$).
 
-The three-term recurrence relation for Legendre polynomials,
-$$P_{\ell+1}(x) = \frac{2\ell+1}{\ell+1}x\,P_\ell(x) - \frac{\ell}{\ell+1}P_{\ell-1}(x),$$
-is a second-order linear recurrence. Mathematically, it admits **two linearly independent solutions**. One is the physical Legendre polynomial $P_\ell(x)$ that we seek. The other is a second solution that satisfies the same recurrence but is not selected by the physical boundary conditions ($P_0 = 1$ and $P_1 = x$).
+Miller's algorithm is effective when, in the backward direction, the wanted solution is the minimal one and the unwanted mode is strongly damped. In that case, starting from arbitrary values at large $L$ and normalizing at the end suppresses the wrong component.
 
-### Miller's Algorithm: Dominant and Minimal Solutions
+In this experiment (ordinary Legendre $P_\ell(x)$ for $|x|<1$), that clean dominant/minimal separation is not observed in a way that automatically selects $P_\ell$. The backward run uses arbitrary seeds ($\tilde P_{L+1}=0$, $\tilde P_L=1$) and only one final normalization ($P_0=1$), so it does not enforce the second physical condition $P_1=x$. As a consequence, the computed backward sequence remains contaminated by the second independent solution.
 
-Miller's key observation is that the behaviour of the two solutions depends on the **direction of propagation**:
+This is exactly what the data show in `outputs/legendre_errors.csv`:
 
-- **Forward direction** (increasing $\ell$): The physical solution $P_\ell(x)$ is the *minimal* (slowly growing) solution for $|x| < 1$, while the unwanted solution is *dominant* (rapidly growing).
-- **Backward direction** (decreasing $\ell$ from large $L$): The roles reverse: the unwanted solution is now minimal (decays) while the physical solution remains slowly varying.
+- Forward recurrence stays near machine precision for all tested $x$ up to $\ell=50$.
+	- At $\ell=50$: relative error is about $3.40\times10^{-16}$ ($x=0.1$), $1.73\times10^{-16}$ ($x=0.5$), $3.42\times10^{-16}$ ($x=0.9$), $2.37\times10^{-15}$ ($x=0.99$).
+- Backward recurrence is much less accurate with the arbitrary initialization.
+	- At $\ell=50$: relative error is about $2.46$ ($x=0.1$), $1.00$ ($x=0.5$), $3.69\times10^{-1}$ ($x=0.9$), $5.35\times10^{-1}$ ($x=0.99$).
+	- Maximum backward relative errors in the table are also large (up to about $6.16\times10^{1}$ for $x=0.1$).
 
-Miller's algorithm exploits this by starting the backward sweep at an artificially high degree $L$ with arbitrary seeds, then normalizing at $\ell=0$. As the sweep goes backward, the dominant (unwanted) component is exponentially damped, leaving only the physical solution.
-
-### Failure of Dominant/Minimal Separation for Ordinary Legendre Polynomials on $|x|<1$
-
-**However**, for ordinary Legendre polynomials $P_\ell(x)$ with $|x| < 1$ (interior of the interval), the dominant/minimal mechanism **does not produce a clean separation**. The two solutions do not have clearly separated growth rates that would guarantee robust recovery of $P_\ell$ via a single normalization condition ($P_0 = 1$) alone.
-
-In fact, a three-term recurrence requires **two initial values** to uniquely specify a solution. Miller's algorithm enforces only one constraint ($P_0 = 1$) at the end of the backward sweep. This is insufficient to fully determine the physical solution when the two linearly independent solutions have comparable magnitude in the range of interest. The backward sweep with arbitrary seeds followed by one-point normalization does not reliably eliminate contamination from the unwanted mode across all degrees.
-
-### Forward Recurrence is Stable for the Tested Values
-
-By contrast, the **forward recurrence initialized with the exact physical values** $P_0(x) = 1$ and $P_1(x) = x$ directly selects the correct solution. Both initial conditions are enforced from the start.
-
-For the tested values $x \in \{0.1, 0.5, 0.9, 0.99\}$ (all interior to $[-1, 1]$), the forward recurrence propagates the physical solution cleanly. With the corrected reference evaluation, the forward absolute and relative errors remain close to machine precision (typically around $10^{-15}$ or smaller) across the degree range, while the backward recurrence seeded with arbitrary values remains noticeably less accurate.
-
-### Backward Recurrence Fails to Recover $P_\ell$ Reliably
-
-Conversely, the arbitrary backward recurrence does **not reliably recover $P_\ell(x)$** for the same values. The plots show that the backward errors are significantly larger than the forward errors across all tested degrees and $x$ values. This is not because of algorithmic instability in the backward direction (the recurrence itself is stable backwards), but because:
-
-1. The arbitrary initial seeds at $L=100$ do not encode the true physical solution in a recoverable way.
-2. A single normalization at $\ell=0$ is insufficient to suppress all contamination from the unwanted linearly independent solution.
-3. The contamination persists across the entire degree range.
-
-### Conclusion
-
-For Legendre polynomials on $|x|<1$, the numerical experiment confirms that **algorithmic stability and mathematical solution selection are distinct issues**. The forward recurrence is the reliable method because it directly encodes the physics through exact initial conditions. Miller's algorithm, while theoretically elegant and powerful for other special functions (e.g., Bessel functions near the turning point), does not provide automatic advantage for ordinary Legendre polynomials in this parameter regime. The practical lesson is that starting with the correct boundary values is more robust than relying on asymptotic damping of unwanted modes.
+Therefore, for the requested setup, the expected behavior is confirmed: **forward recurrence is stable and accurate**, while the **arbitrary backward recurrence generally does not recover the physical $P_\ell$ sequence**.
 
 ## 5: Spherical Harmonics
 
@@ -150,14 +125,14 @@ For spherical harmonics I observe the following relative errors:
 	<figcaption>Figure 11. Relative errors for the spherical harmonics computed from the forward and backward recurrence at x = 0.9.</figcaption>
 </figure>
 
+Since
+$$Y_{\ell 0}(\theta,\phi)=\sqrt{\frac{2\ell+1}{4\pi}}\,P_\ell(\cos\theta),$$
+the normalization factor is known and does not introduce additional instability. Therefore, the relative error in $Y_{\ell0}$ should track the relative error in $P_\ell(\cos\theta)$.
+
+This is exactly what the data show: in `outputs/legendre_errors.csv`, the columns `rel_err_sph_forward` and `rel_err_forward` (and analogously `rel_err_sph_back` and `rel_err_back`) are equal up to machine-roundoff differences (maximum absolute mismatch about $2\times10^{-16}$ for forward and $9\times10^{-16}$ for backward). So the spherical-harmonic error behavior is a direct propagation of the Legendre error behavior.
+
 <figure>
 	<img src="outputs/spherical_harm_errors_x_0.99.png" alt="spherical harmonic relative errors for x=0.99">
 	<figcaption>Figure 12. Relative errors for the spherical harmonics computed from the forward and backward recurrence at x = 0.99.</figcaption>
 </figure>
 
-## 6
-The three-term recurrence for Legendre polynomials admits two linearly independent solutions. One is the physical solution $P_l(x)$ that we want, while the other is a second solution of the same recurrence that is not selected by the initial conditions of the mathematical problem. In recurrence language, one of these behaves as a dominant solution and the other as a minimal solution, depending on the direction in which the recurrence is iterated. When the recurrence is run forward in finite precision, roundoff introduces a small contamination from the dominant mode, and that component is amplified step after step. For this reason the forward recurrence can become unstable even if the exact polynomial values themselves are perfectly regular.
-
-Miller's idea is to reverse the direction of the computation. In backward recurrence, the unstable component is no longer amplified; instead it is damped as the recursion moves from large $l$ down to small $l$. Starting from arbitrary values at a sufficiently large index $L$ and then normalizing the sequence at the end suppresses the unwanted dominant component and recovers the minimal, physically relevant solution. This is why backward recurrence is usually the stable way to evaluate the sequence when forward propagation would amplify roundoff.
-
-This also clarifies the difference between conditioning and stability. The Legendre polynomials $P_l(x)$ near $x = 1$ are not themselves badly conditioned objects: a small perturbation in the data does not necessarily imply a huge change in the exact value. However, an algorithm can still be unstable if it magnifies floating-point perturbations internally. In this homework the loss of accuracy is therefore not mainly a property of the function being evaluated, but of the forward recurrence algorithm in finite precision. The problem is algorithmic stability, not intrinsic conditioning of the Legendre polynomials.
