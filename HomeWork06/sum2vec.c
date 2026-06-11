@@ -13,6 +13,7 @@
 #define MAX_PATH_LENGTH 256
 #define MAX_VECTOR_SIZES 32
 
+/* Runtime parameters loaded from config.txt. */
 typedef struct {
 	double a;
 	double x;
@@ -24,6 +25,7 @@ typedef struct {
 	char output_file[MAX_PATH_LENGTH];
 } Config;
 
+/* Remove leading/trailing whitespace in-place and return trimmed start pointer. */
 static char *trim(char *text)
 {
 	char *start = text;
@@ -46,6 +48,7 @@ static char *trim(char *text)
 	return start;
 }
 
+/* Parse a positive/negative floating-point value from a full string. */
 static bool parse_double_value(const char *text, double *value)
 {
 	char *end_ptr = NULL;
@@ -66,6 +69,7 @@ static bool parse_double_value(const char *text, double *value)
 	return true;
 }
 
+/* Parse a strictly positive integer from a full string. */
 static bool parse_int_value(const char *text, int *value)
 {
 	char *end_ptr = NULL;
@@ -88,6 +92,7 @@ static bool parse_int_value(const char *text, int *value)
 	return true;
 }
 
+/* Parse a comma-separated list of positive integers (e.g. "100,1000,10000"). */
 static bool parse_int_list(char *text, int *values, int *count)
 {
 	char *token = strtok(text, ",");
@@ -114,12 +119,14 @@ static bool parse_int_list(char *text, int *values, int *count)
 	return true;
 }
 
+/* Initialize defaults before applying values read from config file. */
 static void init_config(Config *config)
 {
 	memset(config, 0, sizeof(*config));
 	strncpy(config->output_file, "sum2vec_output.h5", sizeof(config->output_file) - 1);
 }
 
+/* Load and validate config keys: a, x, y, vector_sizes and chunk parameters. */
 static bool parse_config_file(const char *config_path, Config *config)
 {
 	FILE *config_file = fopen(config_path, "r");
@@ -134,6 +141,7 @@ static bool parse_config_file(const char *config_path, Config *config)
 		return false;
 	}
 
+	/* Parse key=value pairs, allowing inline comments after '#'. */
 	while (fgets(line, sizeof(line), config_file) != NULL) {
 		char *separator = NULL;
 		char *key = NULL;
@@ -221,6 +229,7 @@ static bool parse_config_file(const char *config_path, Config *config)
 
 static int compute_chunk_size(const Config *config, int vector_size)
 {
+	/* Priority: explicit chunk_size, otherwise infer from requested num_chunks. */
 	if (config->chunk_size > 0) {
 		return config->chunk_size;
 	}
@@ -237,6 +246,7 @@ static bool test_ok(const double *d, const double *x, const double *y, double a,
 {
 	const double tolerance = 1e-12;
 
+	/* Verify element-wise that d[i] = a*x[i] + y[i]. */
 	for (int index = 0; index < n; index++) {
 		double expected_value = a * x[index] + y[index];
 
@@ -279,6 +289,8 @@ static double sum2vec_chunk_accumulate(
 {
 	double total_sum = 0.0;
 
+	/* Process the vectors chunk-by-chunk and store a padded 2D chunk layout
+	 * so each chunk can be inspected later in HDF5. */
 	for (int chunk_index = 0; chunk_index < num_chunks; chunk_index++) {
 		int start = chunk_index * chunk_size;
 		int end = start + chunk_size;
@@ -289,6 +301,7 @@ static double sum2vec_chunk_accumulate(
 		}
 
 		chunk_lengths[chunk_index] = end - start;
+		/* Initialize full chunk slots to NaN so padding is explicit. */
 		for (int offset = 0; offset < chunk_size; offset++) {
 			int flat_index = chunk_index * chunk_size + offset;
 
@@ -447,6 +460,7 @@ static bool write_run_to_hdf5(
 		return false;
 	}
 
+	/* Save both metadata (attributes) and full vector/chunk datasets for this run. */
 	status |= write_int_attribute(group_id, "vector_size", n);
 	status |= write_int_attribute(group_id, "chunk_size", chunk_size);
 	status |= write_int_attribute(group_id, "num_chunks", num_chunks);
@@ -493,6 +507,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	/* Single output file containing one group per tested vector size. */
 	hdf5_file = H5Fcreate(config.output_file, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
 	if (hdf5_file < 0) {
 		fprintf(stderr, "Cannot create HDF5 file: %s\n", config.output_file);
@@ -534,6 +549,7 @@ int main(int argc, char *argv[])
 
 		fill_vector(x, n, config.x);
 		fill_vector(y, n, config.y);
+		/* Baseline full-vector computation and chunked computation. */
 		sum2vec_reference(d_reference, x, y, config.a, n);
 		accumulated_sum = sum2vec_chunk_accumulate(
 			d_chunked,
@@ -553,6 +569,7 @@ int main(int argc, char *argv[])
 			expected_sum += d_reference[index];
 		}
 
+		/* Validate chunked output against direct formula and sum consistency. */
 		if (!test_ok(d_chunked, x, y, config.a, n)) {
 			fprintf(stderr, "Chunked computation failed for N = %d\n", n);
 			free(x);
