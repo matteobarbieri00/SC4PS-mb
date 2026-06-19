@@ -53,10 +53,13 @@ plot-python: run $(VENV_STAMP)
 
 # Clean
 clean:
-	rm -rf $(OBJ_DIR) $(BIN_DIR) $(OUT_DIR) *.csv
+	rm -rf $(OBJ_DIR) $(BIN_DIR)
+
+clean-all: clean
+	rm -rf $(OUT_DIR) *.csv $(VENV_DIR)
 
 clean-venv:
 	rm -rf $(VENV_DIR)
 
 # Phony targets
-.PHONY: all run venv plot-python clean clean-venv
+.PHONY: all run venv plot-python clean clean-all clean-venv

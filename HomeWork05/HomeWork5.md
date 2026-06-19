@@ -32,8 +32,11 @@ make plot-python
 Optional cleanup commands:
 
 ```bash
-# Remove build artifacts, binaries, and generated outputs
+# Remove build artifacts and binaries
 make clean
+
+# Remove build artifacts, binaries, generated outputs, and virtual environment
+make clean-all
 
 # Remove the Python virtual environment
 make clean-venv
