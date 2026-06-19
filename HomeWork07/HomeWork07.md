@@ -9,9 +9,6 @@ make all
 make run
 make venv
 make plot-python
-make clean
-make clean-all
-make clean venv
 ```
 
 and optional cleanup commands:
