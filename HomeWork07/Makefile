@@ -53,7 +53,10 @@ plot-python: run $(VENV_STAMP)
 
 # Clean
 clean:
-	rm -rf $(OBJ_DIR) $(BIN_DIR) $(OUT_DIR)
+	rm -rf $(OBJ_DIR) $(BIN_DIR) 
+
+clean-all: clean
+	rm -rf $(OUT_DIR) $(VENV_DIR)
 
 clean-venv:
 	rm -rf $(VENV_DIR)

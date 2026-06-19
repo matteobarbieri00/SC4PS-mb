@@ -9,8 +9,23 @@ make all
 make run
 make venv
 make plot-python
+make clean
+make clean-all
+make clean venv
 ```
 
+and optional cleanup commands:
+
+```bash
+# Remove build artifacts and binaries
+make clean
+
+# Remove build artifacts, binaries, generated outputs, and virtual environment
+make clean-all
+
+# Remove the Python virtual environment
+make clean-venv
+```
 ## 1: Coin Tosses and Low of Large Numbers (LLN)
 
 
