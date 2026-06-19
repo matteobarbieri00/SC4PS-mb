@@ -1,5 +1,5 @@
 # Homewor05 - Stability of Legendre Polynomials
-For this homework I here report the answers to the various points in order to include all the information regarding the questions at this [link](https://codimd.infn.it/s/J2RN0fKY5).
+For this homework I here report the answers to the various points in order to include all the information regarding the questions for this assignement.
 
 ## 1: Project Structure
 
