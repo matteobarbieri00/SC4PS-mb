@@ -36,4 +36,4 @@ I have taken the various times, as explained in the above section. When the matr
 | N     | Initialization        | Multiplication        | Check                 | Opt Multiplication    | Opt Check             |
 | 30    | $2.22 \times 10^{-2}$ | $8.30 \times 10^{-5}$ | $5.10 \times 10^{-5}$ | $8.30 \times 10^{-5}$ | $4.10 \times 10^{-5}$ |
 | 1000  | $8.92 \times 10^{-3}$ | $2.98$                | $2.00 $               | $2.93$                | $3.35 \tiems 10^{-2}$ |
-| 10000 |
+| 5000  | $1.57 \times 10^{-1}$ | $4.49 \times 10^2$    | $3.24 \times 10^2$    | $3.68 \times 10^2$    | $8.15 \times 10^{-1}$ |
