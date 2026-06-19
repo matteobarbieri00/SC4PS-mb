@@ -5,9 +5,9 @@ For this homework I here report the answers to the various points in order to in
 
 The `src/` directory contains the C source files used for the numerical experiment. In particular, `compute.c` drives the generation of the error table, while `legendre_polynomials.c` implements the forward recurrence, the backward recurrence, and the reference evaluation used for the comparison.
 
-The `include/` directory stores the public header `legendre_polynomials.h`. This file exposes the function prototypes shared by the source files and keeps the interface separated from the implementation.
+The `include/` directory stores the public headers `legendre_polynomials.h` and `spherical_harm.h`. These files expose the function prototypes shared by the source files and keeps the interface separated from the implementation.
 
-The `scripts/` directory contains the Python post-processing utilities. At the moment it includes `plot_errors.py`, which reads the generated CSV file and produces the plots of absolute and relative errors for the selected values of $x$.
+The `scripts/` directory contains the Python post-processing utilities. At the moment it includes `plot_errors.py`, which reads the generated CSV file and produces the plots of absolute and relative errors for the selected values of $x$ both for legendre polynomials and spherical harmonics.
 
 The `outputs/` directory is used for generated results. It collects the CSV table with the computed errors together with the image files produced by the plotting script, so numerical data and visualizations remain separate from the source code.
 
