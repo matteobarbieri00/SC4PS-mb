@@ -1,6 +1,6 @@
 # HomeWork03: Matrix Multiplication
 
-In this homework task, I implemented matrix multiplication. This is done in the file `matmul.c`, which is to be compiled with the command `clang matmul.c -o matmul.x` (the second argument is optional) and run with the command `./matmul.x a b N fileout.txt`, where the last argument is the file where to write the output. 
+In this homework task, I implemented matrix multiplication. This is done in the file `matmul.c`, which is to be compiled with the command `gcc matmul.c -o matmul.x` (the second argument is optional) and run with the command `./matmul.x a b N fileout.txt`, where the last argument is the file where to write the output. 
 
 ## Matrix multiplication functions
 I have implemented two version for matrix multipliation:
